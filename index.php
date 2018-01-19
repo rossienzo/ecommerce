@@ -253,6 +253,9 @@ $app->post("/admin/forgot/reset", function(){
 
 });
 
+
+///// CATEGORIES - INÍCIO DA ROTA LIST /////
+
 $app->get("/admin/categories", function(){
 
 	user::verifyLogin(); 
@@ -267,10 +270,9 @@ $app->get("/admin/categories", function(){
 
 });
 
+///// FIM DA ROTA LIST /////
 
-//
-////Rota para Criar categoria////
-							   //
+///// CATEGORIES - INÍCIO DA ROTA CREATE /////
 
 $app->get("/admin/categories/create", function(){
 
@@ -297,13 +299,10 @@ $app->post("/admin/categories/create", function(){
 
 });
 
-//
-////FIM da rota de criar categoria////
-									//
+///// FIM DA ROTA CREATE /////
 
-//
-//// Rota DELETAR categoria////
-								  //
+
+///// CATEGORIES - ROTA DELETE //////
 
 $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 
@@ -320,9 +319,13 @@ $app->get("/admin/categories/:idcategory/delete", function($idcategory){
 
 });
 
-//
-//// FIM da Rota DELETAR categoria////
-								  	//
+
+///// FIM DA ROTA DELETAR /////
+
+
+
+////// INÍCIO DA ROTA UPDATE /////
+				  
 
 $app->get("/admin/categories/:idcategory", function($idcategory){
 
@@ -356,6 +359,27 @@ $app->post("/admin/categories/:idcategory", function($idcategory){
 	exit;
 });
 
+///// FIM DA ROTA UPDATE /////
+
+
+///// INÍCIO DA ROTA PARA AS CATEGORIAS/////
+
+$app->get("/categories/:idcategory", function($idcategory){
+
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$page = new Page();
+
+	$page->setTpl("category", [
+		'category'=>$category->getValues(),
+		'products'=>[]
+	]);
+});
+
+
+///// FIM DA ROTA PARA AS CATEGORIAS/////
 
 $app->run();
 
