@@ -6,6 +6,7 @@ use \Slim\Slim;
 use \Hcode\Page;
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
+use \Hcode\Model\Category;
 
 $app = new Slim();
 
@@ -102,7 +103,7 @@ $app->get("/admin/users/:iduser/delete", function($iduser) {
 
 	$user->delete();
 
-	header("Location /admin/users");
+	header("Location: /admin/users");
 	exit;
 });
 
@@ -252,7 +253,108 @@ $app->post("/admin/forgot/reset", function(){
 
 });
 
+$app->get("/admin/categories", function(){
 
+	user::verifyLogin(); 
+
+	$categories = Category::listAll();
+	
+	$page = new PageAdmin();
+
+	$page->setTpl("categories", [
+		'categories'=>$categories
+	]);
+
+});
+
+
+//
+////Rota para Criar categoria////
+							   //
+
+$app->get("/admin/categories/create", function(){
+
+	user::verifyLogin(); 
+	
+	$page = new PageAdmin();
+
+	$page->setTpl("categories-create");
+
+});
+
+$app->post("/admin/categories/create", function(){
+
+	user::verifyLogin(); 
+
+	$category = new Category();
+	
+	$category->setData($_POST);
+
+	$category->save();
+
+	header('Location: \admin\categories');
+	exit;
+
+});
+
+//
+////FIM da rota de criar categoria////
+									//
+
+//
+//// Rota DELETAR categoria////
+								  //
+
+$app->get("/admin/categories/:idcategory/delete", function($idcategory){
+
+	user::verifyLogin(); 
+	
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$category->delete();
+
+	header('Location: \admin\categories');
+	exit;
+
+});
+
+//
+//// FIM da Rota DELETAR categoria////
+								  	//
+
+$app->get("/admin/categories/:idcategory", function($idcategory){
+
+	user::verifyLogin(); 
+	
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$page = new PageAdmin();
+
+	$page->setTpl("categories-update", [
+		'category'=>$category->getValues()
+	]);
+
+});
+
+$app->post("/admin/categories/:idcategory", function($idcategory){
+
+	user::verifyLogin(); 
+	
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$category->setData($_POST);
+
+	$category->save();
+
+	header('Location: \admin\categories');
+	exit;
+});
 
 
 $app->run();
