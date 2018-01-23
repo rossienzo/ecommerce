@@ -3,6 +3,7 @@
 use \Hcode\PageAdmin;
 use \Hcode\Model\User;
 use \Hcode\Model\Category;
+use \Hcode\Model\Product;
 
 ///// CATEGORIES - INÍCIO DA ROTA LIST /////
 
@@ -112,23 +113,71 @@ $app->post("/admin/categories/:idcategory", function($idcategory){
 ///// FIM DA ROTA UPDATE /////
 
 
-///// INÍCIO DA ROTA PARA AS CATEGORIAS/////
+/////INICIO DA ROTA DE LISTAGEM DOS PRODUTOS/////
 
-$app->get("/categories/:idcategory", function($idcategory){
+$app->get("/admin/categories/:idcategory/products", function($idcategory){
 
+	user::verifyLogin(); 
+	
 	$category = new Category();
 
 	$category->get((int)$idcategory);
 
-	$page = new Page();
+	$page = new PageAdmin();
 
-	$page->setTpl("category", [
+	$page->setTpl("categories-products", [
 		'category'=>$category->getValues(),
-		'products'=>[]
+		'productsRelated'=>$category->getProducts(),
+		'productsNotRelated'=>$category->getProducts(false)
 	]);
+
 });
 
+/////FIM DA ROTA DE LISTAGEM DOS PRODUTOS/////
 
-///// FIM DA ROTA PARA AS CATEGORIAS/////
 
+/////INICIO DA ROTA DE ADICIONAR PRODUTOS/////
+
+$app->get("/admin/categories/:idcategory/products/:idproduct/add", function($idcategory, $idproduct){
+
+	user::verifyLogin(); 
+	
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+
+	$product->get((int)$idproduct);
+
+	$category->addProduct($product);
+
+	header("Location: /admin/categories/".$idcategory."/products");
+	exit;
+});
+
+/////FIM DA ROTA DE ADICIONAR PRODUTOS/////
+
+
+/////INÍCIO DA ROTA DE REMOVER PRODUTOS/////
+
+$app->get("/admin/categories/:idcategory/products/:idproduct/remove", function($idcategory, $idproduct){
+
+	user::verifyLogin(); 
+	
+	$category = new Category();
+
+	$category->get((int)$idcategory);
+
+	$product = new Product();
+
+	$product->get((int)$idproduct);
+
+	$category->removeProduct($product);
+
+	header("Location: /admin/categories/".$idcategory."/products");
+	exit;
+
+/////FIM DA ROTA DE REMOVER PRODUTOS/////
+});
  ?>
