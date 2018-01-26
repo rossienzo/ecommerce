@@ -362,6 +362,7 @@ class User extends Model {
 
 	public static function checkLoginExist($login) {
 
+		//Verifica se o email para cadastro já existe no BD
 		$sql = new Sql();
 
 		$results = $sql->select("SELECT * FROM tb_users WHERE deslogin = :deslogin", [
